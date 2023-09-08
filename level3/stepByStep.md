@@ -1,0 +1,3 @@
+level3:
+On voit un binaire, on l'ouvre avec un outil de reverse-engineering, on voit qu'il fait appel a la fonction v qui ouvre un shell admin si un int correspond a la bonne valeur (64)
+On ouvre gdb, on disass la fonction v(), on met un breakpoint juste avant la comparaison (cmp 0x080484df) sur le mov (b *0x080484da). On lance avec r, une fois arrive au breakpoint on fait stepi, puis set $eax=64, puis c. On entre dans le shell admin et on peut cat le password
