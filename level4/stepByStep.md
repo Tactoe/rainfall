@@ -1,18 +1,22 @@
 Quand on reverse l'executable
 On voit que main appel la fonction n qui appel la fonction p.
 
+
 n() appel fgets() qui recupere de maniere safe notre input.
 puis dans la fonction notre input est utiliser en tant que format string pour printf
 Ce qui en fait une vulnerabiliter.
-Apres la fonction p, une variable a l'adresse 0x8049810 est stocker dans eax puis est comparer a la valeur 0x1025544.
+Apres la fonction p, une variable a l'adresse 0x8049810 est stockee dans eax puis est comparee a la valeur 0x1025544 (16930116).
 Si eax est egal a cette valeur, alors un appel a system est executer avec comme argument:
 0x8048590 = "/bin/cat /home/user/level5/.pass"
+
 
 Il faut donc que l'on arrive a modifier la variable 0x8049810 pour qu'elle soit egale a 0x1025544
 Apres quelque test on remarque que 0x8049810 vaut 0.
 
-Grace a la vulnerabiliter du printf on va pouvoir utiliser une format string attack afin de modifier la valeur de m (0x8049810)
+
+Grace a la vulnerabilite du printf on va pouvoir utiliser une format string attack afin de modifier la valeur de m (0x8049810)
 Pour se faire nous avons besoin de l'emplacement de notre buffer dans la stack au moment ou printf est executer (l'offset)
+
 
 python -c "print('AAAA' + ' %p '*20)" | ./level4
 ce qui devrait nous donner une liste d'adresse dont une egale a 41414141
