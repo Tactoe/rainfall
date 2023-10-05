@@ -1,29 +1,24 @@
-Quand on reverse l'executable
-On voit que main appel la fonction n qui appel la fonction p.
+Quand on reverse l'exécutable, on voit que main appel la fonction n qui appel la fonction p.
 
 
 n() appel fgets() qui recupere de maniere safe notre input.
-puis dans la fonction notre input est utiliser en tant que format string pour printf
-Ce qui en fait une vulnerabiliter.
-Apres la fonction p, une variable a l'adresse 0x8049810 est stockee dans eax puis est comparee a la valeur 0x1025544 (16930116).
-Si eax est egal a cette valeur, alors un appel a system est executer avec comme argument:
-0x8048590 = "/bin/cat /home/user/level5/.pass"
+puis dans la fonction notre input est utilisé en tant que format string pour printf
+Ce qui en fait une vulnérabilité.
+Après la fonction p, une variable à l'adresse 0x8049810 est stockée dans eax puis est comparée à la valeur 0x1025544 (16930116 en décimal).
+Si eax est égal a cette valeur, alors `system()` est executé avec comme argument:
+`0x8048590 = "/bin/cat /home/user/level5/.pass"`
+
+Il faut donc que l'on arrive à modifier la variable à l'adresse 0x8049810 pour qu'elle contienne 0x1025544
+Après quelque test on remarque que 0x8049810 vaut 0.
+
+Grace à la vulnérabilité du printf on va pouvoir utiliser une format string attack afin de modifier la valeur de m
+Pour ce faire nous avons besoin de l'emplacement de notre buffer dans la stack au moment ou printf est exécuté (l'offset)
 
 
-Il faut donc que l'on arrive a modifier la variable 0x8049810 pour qu'elle soit egale a 0x1025544
-Apres quelque test on remarque que 0x8049810 vaut 0.
-
-
-Grace a la vulnerabilite du printf on va pouvoir utiliser une format string attack afin de modifier la valeur de m (0x8049810)
-Pour se faire nous avons besoin de l'emplacement de notre buffer dans la stack au moment ou printf est executer (l'offset)
-
-
-python -c "print('AAAA' + ' %p '*20)" | ./level4
-ce qui devrait nous donner une liste d'adresse dont une egale a 41414141
-On retient sa position qui est 12.
-
-et on verifie si le 12e emplacement est bien notre buffer
-( '%12\$x' signifie que l'on souhaite utiliser le 12eme argument de printf, donc le 12eme element sur la stack )
+`python -c "print('AAAA' + ' %p '*20)" | ./level4`
+Le flag %p va print l'adresse d'un élément de la stack, en le faisant plusieurs fois on va "remonter" le long de la stack. Il faut juste trouver quelle adresse est égale à 41414141
+On retient sa position qui est 12 et on vérifie si le 12e emplacement est bien notre buffer
+( '%12\$x' signifie que l'on souhaite utiliser le 12ème argument de printf, donc le 12ème élément sur la stack )
 python -c "print('AAAA' + '%12\$x')" | ./level4
 
 Maintenant que nous avons l'offset de notre buffer on peut passer a la suite et essayer de changer des valeurs.
@@ -33,12 +28,10 @@ On souhaite ecrire l'adresse de m dans notre buffer pour ensuite utiliser le for
 
 1ere etape:
 python -c "print('\x10\x98\x04\x08' + '%12\$x')" | ./level4
-cela devrait ecrire notre adresse dans le 12eme argument.
+cela devrait écrire notre adresse dans le 12eme argument.
 Il manque plus qu'a ecrire X caractere et d'utiliser %n.
 
-m doit avoir la valeur 0x1025544
-ce qui correspond a 16 930 116 en decimal
-
+m doit avoir la valeur 0x1025544 ce qui correspond a 16930116 en decimal
 
 On pourrait utiliser quelque chose comme ceci:
 python -c "print('\x10\x98\x04\x08' + 'B'*16930116 + '%12\$n')" | ./level4
