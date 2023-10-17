@@ -15,7 +15,7 @@ En opération binaire 1 & 0 = 0 donc on obtient
 
 Nous ne pouvont donc pas overwrite EIP avec une adresse commencant par 0xb, ce qui est le cas de toutes les adresses de la stack. 
 
-En revanche on peut utiliser un ret2libc ce qui va nous permettre de bypass la vérification de notre eip et donc de quand même exécuter notre command pour lancer le shell.
+En revanche on peut utiliser un ret2libc ce qui va nous permettre de bypass la vérification de notre eip car on se référera à la heap et donc de quand même exécuter notre commande pour lancer le shell.
 
 Un ret2libc se forme comme ceci:
 
@@ -25,7 +25,7 @@ Toutes ces informations sont disponibles dans le système en dehors de l'exécut
 
 `print &system` --> 0xb7e6b060 (adresse de system()) 
 `print &exit`   --> 0xb7e5ebe0 (adresse de exit())
-`disass p`     --> 0x0804853e (call assembly de ret)
+`disass p`     --> 0x0804853e (call assembly de ret, on remarque que ça ne commence pas par 0xb)
 `find &system, +9999999, "/bin/sh"` --> 0xb7f8cc58 (adresse de la string "/bin/sh") 
 
 Il nous manque que l'offset afin de savoir quel taille fait notre buffer.

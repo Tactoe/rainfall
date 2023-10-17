@@ -11,7 +11,7 @@ Si eax est égal a cette valeur, alors `system()` est executé avec comme argume
 Il faut donc que l'on arrive à modifier la variable à l'adresse 0x8049810 pour qu'elle contienne 0x1025544
 Après quelque test on remarque que 0x8049810 vaut 0.
 
-Grace à la vulnérabilité du printf on va pouvoir utiliser une format string attack afin de modifier la valeur de m
+Grâce à la vulnérabilité du printf on va pouvoir utiliser une format string attack afin de modifier la valeur de m
 Pour ce faire nous avons besoin de l'emplacement de notre buffer dans la stack au moment ou printf est exécuté (l'offset)
 
 
@@ -23,7 +23,7 @@ python -c "print('AAAA' + '%12\$x')" | ./level4
 
 Maintenant que nous avons l'offset de notre buffer on peut passer a la suite et essayer de changer des valeurs.
 
-On souhaite ecrire l'adresse de m dans notre buffer pour ensuite utiliser le format %n afin d'ecrire le nombre de caractere ecrit avant notre format %n dans notre variable m.
+On souhaite écrire l'adresse de m dans notre buffer pour ensuite utiliser le format %n afin d'ecrire le nombre de caractere ecrit avant notre format %n dans notre variable m.
 ---> ("coucou%n", &nb)  --> nb = 6
 
 1ere etape:

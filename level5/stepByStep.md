@@ -1,5 +1,5 @@
 Si on disass notre executable il call printf avec notre input et utilise exit pour terminer le programme.
-On remarque aussi que une fonction est presente mais n'est pas appelée, la fonction o exécute system("/bin/sh").
+On remarque aussi que une fonction est présente mais n'est pas appelée, la fonction o exécute system("/bin/sh").
 On en déduit qu'il va falloir detourner notre executable afin qu'il lance la fonction qui n'est pas utilisée ( la fonction o )
 
 Vu que notre input est directement utilisé par printf nous pouvons effectuer un format string attack, mais contrairement a l'exercice d'avant nous ne pouvons pas utiliser le retour de la fonction pour l'exploit car la fonction se termine avant avec l'appel de exit(). Donc il n'y a pas d'EIP a overwrite.
@@ -10,7 +10,6 @@ Pour obtenir les différentes adresses:
 Dans gdb:
 --> info functions
 - 0x080484a4  o
-
 et pour avoir l'emplacement de la relocation on utilise readelf
 --> readelf -r ./level5
 - 08049838  00000607 R_386_JUMP_SLOT   00000000   exit
