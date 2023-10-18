@@ -36,6 +36,6 @@ int main(int ac,char **av)
   nPointer1 = nClass1;
   nPointer2 = nClass2;
   nClass1->setAnnotation(av[1]);
-  return (nPointer2->*nPointer2->operatorFunctionPointer)(*nClass2);
+  return (nPointer2->*nPointer2->operatorFunctionPointer)(*nClass1);
 }
 
